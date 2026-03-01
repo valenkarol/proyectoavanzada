@@ -1,0 +1,344 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Solicitudes Académicas
+  version: 1.0.0
+  description: API REST para el sistema de triage y gestión de solicitudes académicas.
+
+paths:
+
+  /solicitudes:
+    post:
+      summary: Registrar una nueva solicitud académica
+      operationId: createSolicitud
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SolicitudCreateRequest'
+      responses:
+        '201':
+          description: Solicitud registrada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+        '400':
+          description: Datos de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno del servidor
+
+    get:
+      summary: Consultar solicitudes con filtros
+      operationId: getSolicitudes
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: estado
+          in: query
+          schema:
+            type: string
+        - name: tipoSolicitud
+          in: query
+          schema:
+            type: string
+        - name: prioridad
+          in: query
+          schema:
+            type: string
+        - name: responsableId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de solicitudes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SolicitudResponse'
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno del servidor
+
+  /solicitudes/{id}:
+    get:
+      summary: Obtener una solicitud por ID
+      operationId: getSolicitudById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+        '404':
+          description: Solicitud no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: No autorizado
+
+  /solicitudes/{id}/clasificar:
+    patch:
+      summary: Clasificar una solicitud
+      operationId: clasificarSolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClasificacionRequest'
+      responses:
+        '200':
+          description: Solicitud clasificada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+        '400':
+          description: Transición inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Sin permisos suficientes
+
+  /solicitudes/{id}/asignar:
+    patch:
+      summary: Asignar responsable a una solicitud
+      operationId: asignarResponsable
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AsignacionRequest'
+      responses:
+        '200':
+          description: Responsable asignado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+        '400':
+          description: Responsable inválido
+        '403':
+          description: Sin permisos suficientes
+
+  /solicitudes/{id}/iniciar-atencion:
+    patch:
+      summary: Cambiar estado a EN_ATENCION
+      operationId: iniciarAtencion
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud en atención
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+        '400':
+          description: No tiene responsable asignado
+
+  /solicitudes/{id}/finalizar:
+    patch:
+      summary: Marcar solicitud como ATENDIDA
+      operationId: finalizarSolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud atendida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+
+  /solicitudes/{id}/cerrar:
+    patch:
+      summary: Cerrar una solicitud
+      operationId: cerrarSolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CierreRequest'
+      responses:
+        '200':
+          description: Solicitud cerrada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+        '400':
+          description: No se puede cerrar si no está atendida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+
+    SolicitudCreateRequest:
+      type: object
+      required:
+        - tipoSolicitud
+        - descripcion
+        - canalOrigen
+      properties:
+        tipoSolicitud:
+          type: string
+          enum:
+            - REGISTRO_ASIGNATURA
+            - HOMOLOGACION
+            - CANCELACION
+            - CUPO
+            - CONSULTA
+        descripcion:
+          type: string
+          maxLength: 500
+        canalOrigen:
+          type: string
+          enum:
+            - CSU
+            - CORREO
+            - SAC
+            - TELEFONICO
+
+    ClasificacionRequest:
+      type: object
+      required:
+        - tipoSolicitud
+      properties:
+        tipoSolicitud:
+          type: string
+
+    AsignacionRequest:
+      type: object
+      required:
+        - responsableId
+      properties:
+        responsableId:
+          type: string
+
+    CierreRequest:
+      type: object
+      required:
+        - observacion
+      properties:
+        observacion:
+          type: string
+          maxLength: 300
+
+    SolicitudResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        tipoSolicitud:
+          type: string
+        descripcion:
+          type: string
+        estado:
+          type: string
+          enum:
+            - REGISTRADA
+            - CLASIFICADA
+            - EN_ATENCION
+            - ATENDIDA
+            - CERRADA
+        canalOrigen:
+          type: string
+        fechaRegistro:
+          type: string
+          format: date-time
+        prioridad:
+          type: string
+        responsableId:
+          type: string
+      required:
+        - id
+        - tipoSolicitud
+        - descripcion
+        - estado
+        - canalOrigen
+        - fechaRegistro
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
