@@ -2,13 +2,19 @@ openapi: 3.0.0
 info:
   title: API de Gestión de Solicitudes Académicas
   version: 1.0.0
-  description: API REST para el sistema de triage y gestión de solicitudes académicas.
+  description: >
+    API REST para el sistema de triage y gestión de solicitudes académicas.
+    Gestiona el ciclo de vida completo de una solicitud desde su registro hasta su cierre.
+    Flujo de estados permitido:
+    REGISTRADA → CLASIFICADA → EN_ATENCION → ATENDIDA → CERRADA.
+    No se permiten saltos de estado ni retrocesos.
 
 paths:
 
   /solicitudes:
     post:
       summary: Registrar una nueva solicitud académica
+      description: Crea una solicitud en estado inicial REGISTRADA.
       operationId: createSolicitud
       security:
         - BearerAuth: []
@@ -20,7 +26,7 @@ paths:
               $ref: '#/components/schemas/SolicitudCreateRequest'
       responses:
         '201':
-          description: Solicitud registrada exitosamente
+          description: Solicitud registrada exitosamente en estado REGISTRADA
           content:
             application/json:
               schema:
@@ -38,6 +44,7 @@ paths:
 
     get:
       summary: Consultar solicitudes con filtros
+      description: Permite consultar solicitudes según estado, tipo, prioridad o responsable.
       operationId: getSolicitudes
       security:
         - BearerAuth: []
@@ -46,6 +53,12 @@ paths:
           in: query
           schema:
             type: string
+            enum:
+              - REGISTRADA
+              - CLASIFICADA
+              - EN_ATENCION
+              - ATENDIDA
+              - CERRADA
         - name: tipoSolicitud
           in: query
           schema:
@@ -60,7 +73,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Lista de solicitudes
+          description: Lista de solicitudes encontradas
           content:
             application/json:
               schema:
@@ -103,6 +116,9 @@ paths:
   /solicitudes/{id}/clasificar:
     patch:
       summary: Clasificar una solicitud
+      description: >
+        Cambia el estado de REGISTRADA a CLASIFICADA.
+        Solo se permite esta transición si la solicitud está en REGISTRADA.
       operationId: clasificarSolicitud
       security:
         - BearerAuth: []
@@ -126,7 +142,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
         '400':
-          description: Transición inválida
+          description: Transición inválida. Solo se puede clasificar si está en REGISTRADA.
           content:
             application/json:
               schema:
@@ -137,6 +153,9 @@ paths:
   /solicitudes/{id}/asignar:
     patch:
       summary: Asignar responsable a una solicitud
+      description: >
+        Asigna un responsable a la solicitud.
+        Solo puede asignarse si no tiene responsable previamente.
       operationId: asignarResponsable
       security:
         - BearerAuth: []
@@ -160,13 +179,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
         '400':
-          description: Responsable inválido
+          description: Responsable inválido o ya asignado
         '403':
           description: Sin permisos suficientes
 
   /solicitudes/{id}/iniciar-atencion:
     patch:
       summary: Cambiar estado a EN_ATENCION
+      description: >
+        Cambia el estado de CLASIFICADA a EN_ATENCION.
+        Requiere que exista un responsable asignado.
       operationId: iniciarAtencion
       security:
         - BearerAuth: []
@@ -178,17 +200,24 @@ paths:
             type: string
       responses:
         '200':
-          description: Solicitud en atención
+          description: Solicitud en estado EN_ATENCION
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
         '400':
-          description: No tiene responsable asignado
+          description: No tiene responsable asignado o estado inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /solicitudes/{id}/finalizar:
     patch:
       summary: Marcar solicitud como ATENDIDA
+      description: >
+        Cambia el estado de EN_ATENCION a ATENDIDA.
+        Solo puede realizarse si actualmente está en EN_ATENCION.
       operationId: finalizarSolicitud
       security:
         - BearerAuth: []
@@ -200,15 +229,24 @@ paths:
             type: string
       responses:
         '200':
-          description: Solicitud atendida correctamente
+          description: Solicitud en estado ATENDIDA
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
+        '400':
+          description: Transición inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /solicitudes/{id}/cerrar:
     patch:
       summary: Cerrar una solicitud
+      description: >
+        Cambia el estado de ATENDIDA a CERRADA.
+        Una vez cerrada, la solicitud no puede modificarse.
       operationId: cerrarSolicitud
       security:
         - BearerAuth: []
@@ -232,7 +270,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
         '400':
-          description: No se puede cerrar si no está atendida
+          description: No se puede cerrar si no está en estado ATENDIDA
           content:
             application/json:
               schema:
@@ -294,6 +332,11 @@ components:
 
     SolicitudResponse:
       type: object
+      description: >
+        Representa una solicitud académica y su estado dentro del ciclo de vida.
+        Flujo de estados permitido:
+        REGISTRADA → CLASIFICADA → EN_ATENCION → ATENDIDA → CERRADA.
+        No se permiten saltos de estado ni retrocesos.
       properties:
         id:
           type: string
@@ -303,6 +346,7 @@ components:
           type: string
         estado:
           type: string
+          description: Estado actual de la solicitud.
           enum:
             - REGISTRADA
             - CLASIFICADA
