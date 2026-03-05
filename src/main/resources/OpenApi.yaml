@@ -1,21 +1,26 @@
 openapi: 3.0.0
 info:
   title: API de Gestión de Solicitudes Académicas
-  version: 1.0.0
+  version: 2.0.0
   description: >
-    API REST para el sistema de triage y gestión de solicitudes académicas.
-    Gestiona el ciclo de vida completo de una solicitud desde su registro hasta su cierre.
-    Flujo de estados permitido:
+    API REST para el sistema de gestión de solicitudes académicas.
+    Flujo obligatorio de estados:
     REGISTRADA → CLASIFICADA → EN_ATENCION → ATENDIDA → CERRADA.
-    No se permiten saltos de estado ni retrocesos.
+    No se permiten saltos ni retrocesos.
+
+servers:
+  - url: https://api.universidad.edu
 
 paths:
 
-  /solicitudes:
+  ########################################################
+  # USUARIOS
+  ########################################################
+
+  /usuarios:
     post:
-      summary: Registrar una nueva solicitud académica
-      description: Crea una solicitud en estado inicial REGISTRADA.
-      operationId: createSolicitud
+      summary: Crear un nuevo usuario
+      operationId: createUsuario
       security:
         - BearerAuth: []
       requestBody:
@@ -23,14 +28,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SolicitudCreateRequest'
+              $ref: '#/components/schemas/UsuarioCreateRequest'
       responses:
         '201':
-          description: Solicitud registrada exitosamente en estado REGISTRADA
+          description: Usuario creado correctamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SolicitudResponse'
+                $ref: '#/components/schemas/UsuarioResponse'
         '400':
           description: Datos de entrada inválidos
           content:
@@ -43,51 +48,302 @@ paths:
           description: Error interno del servidor
 
     get:
-      summary: Consultar solicitudes con filtros
-      description: Permite consultar solicitudes según estado, tipo, prioridad o responsable.
-      operationId: getSolicitudes
+      summary: Listar todos los usuarios
+      operationId: getUsuarios
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UsuarioResponse'
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno del servidor
+
+  /usuarios/{id}:
+    get:
+      summary: Obtener usuario por ID
+      operationId: getUsuarioById
       security:
         - BearerAuth: []
       parameters:
-        - name: estado
-          in: query
-          schema:
-            type: string
-            enum:
-              - REGISTRADA
-              - CLASIFICADA
-              - EN_ATENCION
-              - ATENDIDA
-              - CERRADA
-        - name: tipoSolicitud
-          in: query
-          schema:
-            type: string
-        - name: prioridad
-          in: query
-          schema:
-            type: string
-        - name: responsableId
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
       responses:
         '200':
-          description: Lista de solicitudes encontradas
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno del servidor
+
+    put:
+      summary: Actualizar completamente un usuario
+      operationId: updateUsuario
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioUpdateRequest'
+      responses:
+        '200':
+          description: Usuario actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error interno del servidor
+
+    patch:
+      summary: Activar o desactivar usuario
+      operationId: toggleUsuario
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioEstadoRequest'
+      responses:
+        '200':
+          description: Estado del usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminación lógica del usuario
+      operationId: deleteUsuario
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario eliminado lógicamente
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error interno del servidor
+
+  ########################################################
+  # PRIORIDADES
+  ########################################################
+
+  /prioridades:
+    post:
+      summary: Crear nueva prioridad
+      operationId: createPrioridad
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrioridadCreateRequest'
+      responses:
+        '201':
+          description: Prioridad creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrioridadResponse'
+        '400':
+          description: Datos inválidos
+        '500':
+          description: Error interno del servidor
+
+    get:
+      summary: Listar prioridades
+      operationId: getPrioridades
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de prioridades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrioridadResponse'
+        '500':
+          description: Error interno del servidor
+
+  /prioridades/{id}:
+    get:
+      summary: Obtener prioridad por ID
+      operationId: getPrioridadById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prioridad encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrioridadResponse'
+        '404':
+          description: Prioridad no encontrada
+        '500':
+          description: Error interno del servidor
+
+    put:
+      summary: Actualizar prioridad
+      operationId: updatePrioridad
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrioridadUpdateRequest'
+      responses:
+        '200':
+          description: Prioridad actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrioridadResponse'
+        '404':
+          description: Prioridad no encontrada
+        '500':
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar prioridad
+      operationId: deletePrioridad
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prioridad eliminada correctamente
+        '404':
+          description: Prioridad no encontrada
+        '500':
+          description: Error interno del servidor
+
+  ########################################################
+  # SOLICITUDES
+  ########################################################
+
+  /solicitudes:
+    post:
+      summary: Crear nueva solicitud
+      operationId: createSolicitud
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SolicitudCreateRequest'
+      responses:
+        '201':
+          description: Solicitud creada en estado REGISTRADA
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolicitudResponse'
+        '400':
+          description: Datos inválidos
+        '500':
+          description: Error interno del servidor
+
+    get:
+      summary: Listar solicitudes
+      operationId: getSolicitudes
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de solicitudes
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/SolicitudResponse'
-        '401':
-          description: No autorizado
         '500':
           description: Error interno del servidor
 
   /solicitudes/{id}:
     get:
-      summary: Obtener una solicitud por ID
+      summary: Obtener solicitud por ID
       operationId: getSolicitudById
       security:
         - BearerAuth: []
@@ -106,20 +362,12 @@ paths:
                 $ref: '#/components/schemas/SolicitudResponse'
         '404':
           description: Solicitud no encontrada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: No autorizado
+        '500':
+          description: Error interno del servidor
 
-  /solicitudes/{id}/clasificar:
-    patch:
-      summary: Clasificar una solicitud
-      description: >
-        Cambia el estado de REGISTRADA a CLASIFICADA.
-        Solo se permite esta transición si la solicitud está en REGISTRADA.
-      operationId: clasificarSolicitud
+    put:
+      summary: Actualizar solicitud (no permitido si está CERRADA)
+      operationId: updateSolicitud
       security:
         - BearerAuth: []
       parameters:
@@ -133,29 +381,49 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ClasificacionRequest'
+              $ref: '#/components/schemas/SolicitudUpdateRequest'
       responses:
         '200':
-          description: Solicitud clasificada correctamente
+          description: Solicitud actualizada correctamente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
         '400':
-          description: Transición inválida. Solo se puede clasificar si está en REGISTRADA.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Sin permisos suficientes
+          description: No se puede modificar si está CERRADA
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar solicitud (solo si está REGISTRADA)
+      operationId: deleteSolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud eliminada correctamente
+        '400':
+          description: Solo se puede eliminar si está REGISTRADA
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
+
+  ########################################################
+  # TRANSICIONES Y ASIGNACIONES
+  ########################################################
 
   /solicitudes/{id}/asignar:
     patch:
-      summary: Asignar responsable a una solicitud
-      description: >
-        Asigna un responsable a la solicitud.
-        Solo puede asignarse si no tiene responsable previamente.
+      summary: Asignar responsable a solicitud
       operationId: asignarResponsable
       security:
         - BearerAuth: []
@@ -170,7 +438,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AsignacionRequest'
+              $ref: '#/components/schemas/AsignarResponsableRequest'
       responses:
         '200':
           description: Responsable asignado correctamente
@@ -179,75 +447,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
         '400':
-          description: Responsable inválido o ya asignado
-        '403':
-          description: Sin permisos suficientes
+          description: Ya tiene responsable asignado
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
 
-  /solicitudes/{id}/iniciar-atencion:
+  /solicitudes/{id}/asignar-prioridad:
     patch:
-      summary: Cambiar estado a EN_ATENCION
-      description: >
-        Cambia el estado de CLASIFICADA a EN_ATENCION.
-        Requiere que exista un responsable asignado.
-      operationId: iniciarAtencion
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Solicitud en estado EN_ATENCION
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SolicitudResponse'
-        '400':
-          description: No tiene responsable asignado o estado inválido
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /solicitudes/{id}/finalizar:
-    patch:
-      summary: Marcar solicitud como ATENDIDA
-      description: >
-        Cambia el estado de EN_ATENCION a ATENDIDA.
-        Solo puede realizarse si actualmente está en EN_ATENCION.
-      operationId: finalizarSolicitud
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Solicitud en estado ATENDIDA
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SolicitudResponse'
-        '400':
-          description: Transición inválida
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /solicitudes/{id}/cerrar:
-    patch:
-      summary: Cerrar una solicitud
-      description: >
-        Cambia el estado de ATENDIDA a CERRADA.
-        Una vez cerrada, la solicitud no puede modificarse.
-      operationId: cerrarSolicitud
+      summary: Asignar prioridad a solicitud
+      operationId: asignarPrioridad
       security:
         - BearerAuth: []
       parameters:
@@ -261,23 +470,294 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CierreRequest'
+              $ref: '#/components/schemas/AsignarPrioridadRequest'
       responses:
         '200':
-          description: Solicitud cerrada correctamente
+          description: Prioridad asignada correctamente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SolicitudResponse'
+        '404':
+          description: Solicitud o prioridad no encontrada
+        '500':
+          description: Error interno del servidor
+
+  /solicitudes/{id}/clasificar:
+    patch:
+      summary: Cambiar estado REGISTRADA → CLASIFICADA
+      operationId: clasificarSolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud clasificada correctamente
         '400':
-          description: No se puede cerrar si no está en estado ATENDIDA
+          description: Estado inválido
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
+
+  /solicitudes/{id}/iniciar-atencion:
+    patch:
+      summary: Cambiar estado CLASIFICADA → EN_ATENCION
+      operationId: iniciarAtencion
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud en atención
+        '400':
+          description: Estado inválido o sin responsable
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
+
+  /solicitudes/{id}/finalizar:
+    patch:
+      summary: Cambiar estado EN_ATENCION → ATENDIDA
+      operationId: finalizarSolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud atendida
+        '400':
+          description: Estado inválido
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
+
+  /solicitudes/{id}/cerrar:
+    patch:
+      summary: Cambiar estado ATENDIDA → CERRADA
+      operationId: cerrarSolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud cerrada correctamente
+        '400':
+          description: Estado inválido
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
+
+  /solicitudes/{id}/historial:
+    get:
+      summary: Obtener historial de una solicitud
+      operationId: getHistorialBySolicitud
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Historial obtenido correctamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistorialResponse'
+        '404':
+          description: Solicitud no encontrada
+        '500':
+          description: Error interno del servidor
+
+  /historial/{id}:
+    get:
+      summary: Obtener registro específico de historial
+      operationId: getHistorialById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Registro encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistorialResponse'
+        '404':
+          description: Registro no encontrado
+        '500':
+          description: Error interno del servidor
 
 components:
+
   schemas:
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    Rol:
+      type: string
+      enum:
+        - ESTUDIANTE
+        - ADMINISTRATIVO
+        - COORDINADOR
+
+    EstadoSolicitud:
+      type: string
+      enum:
+        - REGISTRADA
+        - CLASIFICADA
+        - EN_ATENCION
+        - ATENDIDA
+        - CERRADA
+
+    TipoSolicitud:
+      type: string
+      enum:
+        - REGISTRO_ASIGNATURA
+        - HOMOLOGACION
+        - CANCELACION
+        - CUPO
+        - CONSULTA
+
+    CanalOrigen:
+      type: string
+      enum:
+        - CSU
+        - CORREO
+        - SAC
+        - TELEFONICO
+
+    UsuarioCreateRequest:
+      type: object
+      required:
+        - nombre
+        - correo
+        - rol
+      properties:
+        nombre:
+          type: string
+        correo:
+          type: string
+        rol:
+          $ref: '#/components/schemas/Rol'
+
+    UsuarioUpdateRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+        correo:
+          type: string
+        rol:
+          $ref: '#/components/schemas/Rol'
+
+    UsuarioEstadoRequest:
+      type: object
+      required:
+        - activo
+      properties:
+        activo:
+          type: boolean
+
+    UsuarioResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        correo:
+          type: string
+        rol:
+          $ref: '#/components/schemas/Rol'
+        activo:
+          type: boolean
+        fechaCreacion:
+          type: string
+          format: date-time
+
+    PrioridadCreateRequest:
+      type: object
+      required:
+        - nivelPrioridad
+        - fechaLimite
+      properties:
+        nivelPrioridad:
+          type: string
+        fechaLimite:
+          type: string
+          format: date-time
+        justificacion:
+          type: string
+
+    PrioridadUpdateRequest:
+      type: object
+      properties:
+        nivelPrioridad:
+          type: string
+        fechaLimite:
+          type: string
+          format: date-time
+        justificacion:
+          type: string
+
+    PrioridadResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        nivelPrioridad:
+          type: string
+        fechaLimite:
+          type: string
+          format: date-time
+        justificacion:
+          type: string
+        fechaCreacion:
+          type: string
+          format: date-time
 
     SolicitudCreateRequest:
       type: object
@@ -287,33 +767,44 @@ components:
         - canalOrigen
       properties:
         tipoSolicitud:
-          type: string
-          enum:
-            - REGISTRO_ASIGNATURA
-            - HOMOLOGACION
-            - CANCELACION
-            - CUPO
-            - CONSULTA
+          $ref: '#/components/schemas/TipoSolicitud'
         descripcion:
           type: string
           maxLength: 500
         canalOrigen:
-          type: string
-          enum:
-            - CSU
-            - CORREO
-            - SAC
-            - TELEFONICO
+          $ref: '#/components/schemas/CanalOrigen'
 
-    ClasificacionRequest:
+    SolicitudUpdateRequest:
       type: object
-      required:
-        - tipoSolicitud
       properties:
-        tipoSolicitud:
+        descripcion:
           type: string
+          maxLength: 500
+        tipoSolicitud:
+          $ref: '#/components/schemas/TipoSolicitud'
 
-    AsignacionRequest:
+    SolicitudResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        tipoSolicitud:
+          $ref: '#/components/schemas/TipoSolicitud'
+        descripcion:
+          type: string
+        estado:
+          $ref: '#/components/schemas/EstadoSolicitud'
+        canalOrigen:
+          $ref: '#/components/schemas/CanalOrigen'
+        fechaRegistro:
+          type: string
+          format: date-time
+        prioridad:
+          $ref: '#/components/schemas/PrioridadResponse'
+        responsable:
+          $ref: '#/components/schemas/UsuarioResponse'
+
+    AsignarResponsableRequest:
       type: object
       required:
         - responsableId
@@ -321,65 +812,34 @@ components:
         responsableId:
           type: string
 
-    CierreRequest:
+    AsignarPrioridadRequest:
       type: object
       required:
-        - observacion
+        - prioridadId
       properties:
-        observacion:
+        prioridadId:
           type: string
-          maxLength: 300
 
-    SolicitudResponse:
+    HistorialResponse:
       type: object
-      description: >
-        Representa una solicitud académica y su estado dentro del ciclo de vida.
-        Flujo de estados permitido:
-        REGISTRADA → CLASIFICADA → EN_ATENCION → ATENDIDA → CERRADA.
-        No se permiten saltos de estado ni retrocesos.
       properties:
         id:
           type: string
-        tipoSolicitud:
+        solicitudId:
           type: string
-        descripcion:
+        accion:
           type: string
-        estado:
+        estadoAnterior:
+          $ref: '#/components/schemas/EstadoSolicitud'
+        estadoNuevo:
+          $ref: '#/components/schemas/EstadoSolicitud'
+        observacion:
           type: string
-          description: Estado actual de la solicitud.
-          enum:
-            - REGISTRADA
-            - CLASIFICADA
-            - EN_ATENCION
-            - ATENDIDA
-            - CERRADA
-        canalOrigen:
-          type: string
-        fechaRegistro:
+        fechaHora:
           type: string
           format: date-time
-        prioridad:
-          type: string
-        responsableId:
-          type: string
-      required:
-        - id
-        - tipoSolicitud
-        - descripcion
-        - estado
-        - canalOrigen
-        - fechaRegistro
-
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-        - error
-        - message
+        usuarioResponsable:
+          $ref: '#/components/schemas/UsuarioResponse'
 
   securitySchemes:
     BearerAuth:
