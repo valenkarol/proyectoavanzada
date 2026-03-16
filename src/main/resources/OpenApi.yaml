@@ -314,22 +314,48 @@ paths:
         '500':
           description: Error interno del servidor
 
-    get:
-      summary: Listar solicitudes
-      operationId: getSolicitudes
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: Lista de solicitudes
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SolicitudResponse'
-        '500':
-          description: Error interno del servidor
+    /solicitudes:
+      get:
+        summary: Listar solicitudes
+        operationId: getSolicitudes
+        security:
+          - BearerAuth: [ ]
+        parameters:
+          - name: estado
+            in: query
+            required: false
+            schema:
+              $ref: '#/components/schemas/EstadoSolicitud'
+
+          - name: tipoSolicitud
+            in: query
+            required: false
+            schema:
+              $ref: '#/components/schemas/TipoSolicitud'
+
+          - name: prioridadId
+            in: query
+            required: false
+            schema:
+              type: string
+
+          - name: responsableId
+            in: query
+            required: false
+            schema:
+              type: string
+
+        responses:
+          '200':
+            description: Lista de solicitudes
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SolicitudResponse'
+          '500':
+            description: Error interno del servidor
 
   /solicitudes/{id}:
     get:
@@ -541,13 +567,19 @@ paths:
       summary: Cambiar estado ATENDIDA → CERRADA
       operationId: cerrarSolicitud
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CerrarSolicitudRequest'
       responses:
         '200':
           description: Solicitud cerrada correctamente
@@ -790,6 +822,16 @@ components:
           $ref: '#/components/schemas/PrioridadResponse'
         responsable:
           $ref: '#/components/schemas/UsuarioResponse'
+
+    CerrarSolicitudRequest:
+      type: object
+      required:
+        - observacion
+      properties:
+        observacion:
+          type: string
+          maxLength: 500
+          description: Comentario final obligatorio para cerrar la solicitud
 
     AsignarResponsableRequest:
       type: object
