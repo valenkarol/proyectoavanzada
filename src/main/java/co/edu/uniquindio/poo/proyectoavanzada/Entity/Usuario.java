@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Entity;
 
+import co.edu.uniquindio.poo.proyectoavanzada.Enum.Rol;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
