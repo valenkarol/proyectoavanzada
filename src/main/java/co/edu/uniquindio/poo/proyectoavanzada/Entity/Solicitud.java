@@ -1,6 +1,8 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Entity;
 
 
+import co.edu.uniquindio.poo.proyectoavanzada.Enum.CanalOrigen;
+import co.edu.uniquindio.poo.proyectoavanzada.Enum.EstadoSolicitud;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
