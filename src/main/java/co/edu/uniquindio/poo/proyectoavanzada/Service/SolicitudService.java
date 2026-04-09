@@ -16,7 +16,6 @@ public class SolicitudService {
 
     private final SolicitudRepository solicitudRepository;
     private final UsuarioRepository usuarioRepository;
-    private final PrioridadRepository prioridadRepository;
     private final HistorialSolicitudService historialService;
 
     // 🔹 Crear solicitud
@@ -100,7 +99,7 @@ public class SolicitudService {
         return actualizada;
     }
 
-    // 🔹 Asignar prioridad
+    /** 🔹 Asignar prioridad
     public Solicitud asignarPrioridad(String solicitudId, String prioridadId){
 
         Solicitud solicitud = obtenerPorId(solicitudId);
@@ -119,7 +118,7 @@ public class SolicitudService {
         );
 
         return actualizada;
-    }
+    }**/
 
     // 🔹 Obtener solicitud
     public Solicitud obtenerPorId(String id){

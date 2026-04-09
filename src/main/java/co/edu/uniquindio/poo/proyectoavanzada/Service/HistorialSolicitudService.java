@@ -60,7 +60,7 @@ public class HistorialSolicitudService {
         return historialRepository.findAll();
     }
 
-    // 🔹 Método interno (🔥 importante)
+    // 🔹 Método interno (importante)
     // Este es el que usan otros services (SolicitudService)
     public void registrarDesdeSistema(
             Solicitud solicitud,
