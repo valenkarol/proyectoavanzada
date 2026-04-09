@@ -20,5 +20,7 @@ public class Prioridad {
 
     private LocalDateTime fechaLimite;
 
-    private String justificacion;
-}
+    private String justificacion; //esto
+} //quitar esta clase y poner solo un string con justificacion en solicitud
+// crear un enum para nivel de prioridad
+// fecha limite ponerla en solicitud- es una fecha liimite para responder a la solicitud

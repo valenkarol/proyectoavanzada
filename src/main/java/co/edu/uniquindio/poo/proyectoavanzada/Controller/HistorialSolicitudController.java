@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 //-----------------------------------------
-//NO SABEMOS SI ESTE VA - PREGUNTAAAAAAAR
+//NO SABEMOS SI ESTE VA - PREGUNTAAAAAAAR - NO VA ESTE CONTROLLER PORQUE ES PROPIO DE APP
 //-----------------------------------------
 
 @RestController

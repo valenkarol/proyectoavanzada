@@ -5,7 +5,7 @@ import co.edu.uniquindio.poo.proyectoavanzada.Service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+// TAL VEZ ESTE ES EL QUE MANEJA CASI TODO - Aqui va lo de authController, para eso es el dto (enviar y recibir lo que necesitemos)
 import java.util.List;
 
 @RestController

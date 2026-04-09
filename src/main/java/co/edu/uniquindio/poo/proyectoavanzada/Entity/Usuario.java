@@ -23,3 +23,4 @@ public class Usuario {
     private boolean activo = true;
 
 }
+//Corregir anotacionrd en base a BD y todo lo demas de esta clase por lo menos

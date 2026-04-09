@@ -40,5 +40,6 @@ public class Solicitud {
     @ManyToOne
     @JoinColumn(name = "responsable_id")
     private Usuario responsable;
-
+//el ususario como responsable puede ser nullable
+    //corregir el jpa (column
 }

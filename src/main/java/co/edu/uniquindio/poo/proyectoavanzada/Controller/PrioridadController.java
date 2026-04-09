@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 //---------------------------------------------------
-//PREGUNTAR SI ESTE CONTROLLER SI VA
+//PREGUNTAR SI ESTE CONTROLLER SI VA -  NO VA, LA PRIORIDAD LA ASIGNA SOLICITUD
 //--------------------------------------------------
 @RestController
 @RequestMapping("/prioridades")
