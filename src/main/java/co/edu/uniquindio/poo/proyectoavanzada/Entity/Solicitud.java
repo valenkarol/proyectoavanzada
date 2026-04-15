@@ -3,6 +3,7 @@ package co.edu.uniquindio.poo.proyectoavanzada.Entity;
 
 import co.edu.uniquindio.poo.proyectoavanzada.Enum.CanalOrigen;
 import co.edu.uniquindio.poo.proyectoavanzada.Enum.EstadoSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Enum.Prioridad;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +27,7 @@ public class Solicitud {
     @Enumerated(EnumType.STRING)
     private EstadoSolicitud estado;
 
-    @ManyToOne
-    @JoinColumn(name = "prioridad_id")
+    @Enumerated(EnumType.STRING)
     private Prioridad prioridad;
 
     @Enumerated(EnumType.STRING)
