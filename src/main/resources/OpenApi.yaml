@@ -737,6 +737,14 @@ components:
           type: string
           format: date-time
 
+
+    Prioridad:
+      type: string
+      enum:
+        - ALTA
+        - MEDIA
+        - BAJA
+
     PrioridadCreateRequest:
       type: object
       required:
@@ -819,7 +827,7 @@ components:
           type: string
           format: date-time
         prioridad:
-          $ref: '#/components/schemas/PrioridadResponse'
+          $ref: '#/components/schemas/Prioridad'
         responsable:
           $ref: '#/components/schemas/UsuarioResponse'
 
@@ -844,10 +852,10 @@ components:
     AsignarPrioridadRequest:
       type: object
       required:
-        - prioridadId
+        - prioridad
       properties:
-        prioridadId:
-          type: string
+        prioridad:
+          $ref: '#/components/schemas/Prioridad'
 
     HistorialResponse:
       type: object
