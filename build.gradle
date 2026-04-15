@@ -1,16 +1,56 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.tu.paquete'
-version = '1.0-SNAPSHOT'
+group = 'co.edu.uniquindio'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+
+    // WEB
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // VALIDATION
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // SECURITY (necesario para JWT después)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // JWT (recomendado)
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // MARIADB
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+    // H2 (solo pruebas)
+    runtimeOnly 'com.h2database:h2'
+
+    // LOMBOK
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // DEVTOOLS
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // TEST
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
