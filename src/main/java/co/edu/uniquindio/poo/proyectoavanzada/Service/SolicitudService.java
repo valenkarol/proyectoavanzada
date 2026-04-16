@@ -1,8 +1,9 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Service;
 
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.*;
-import co.edu.uniquindio.poo.proyectoavanzada.Enum.EstadoSolicitud;
-import co.edu.uniquindio.poo.proyectoavanzada.Enum.CanalOrigen;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Usuario;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.CanalOrigen;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

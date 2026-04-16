@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Controller;
 
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.HistorialSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.HistorialSolicitudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

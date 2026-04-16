@@ -1,8 +1,8 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Service;
 
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.HistorialSolicitud;
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.Solicitud;
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.Usuario;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Usuario;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.HistorialSolicitudRepository;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.SolicitudRepository;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.UsuarioRepository;

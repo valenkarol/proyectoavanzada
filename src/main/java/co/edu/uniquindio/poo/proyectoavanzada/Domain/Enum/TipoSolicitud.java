@@ -1,8 +1,7 @@
-package co.edu.uniquindio.poo.proyectoavanzada.Enum;
+package co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum;
 
 public enum TipoSolicitud {
-    REGISTRO,
-    ASIGNATURA,
+    REGISTRO_ASIGNATURA,
     HOMOLOGACION,
     CANCELACION,
     CUPO,

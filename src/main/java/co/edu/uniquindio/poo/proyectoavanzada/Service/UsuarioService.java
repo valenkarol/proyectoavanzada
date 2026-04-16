@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Service;
 
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.Usuario;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Usuario;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

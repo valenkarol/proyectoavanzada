@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Repository;
 
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.HistorialSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

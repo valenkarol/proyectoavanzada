@@ -1,4 +1,4 @@
-package co.edu.uniquindio.poo.proyectoavanzada.Enum;
+package co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum;
 
 public enum Rol {
     ESTUDIANTE,

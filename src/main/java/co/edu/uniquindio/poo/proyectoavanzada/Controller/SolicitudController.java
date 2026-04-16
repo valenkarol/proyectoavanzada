@@ -1,7 +1,7 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Controller;
 
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.Solicitud;
-import co.edu.uniquindio.poo.proyectoavanzada.Enum.EstadoSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.SolicitudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

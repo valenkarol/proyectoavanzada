@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Controller;
 
-import co.edu.uniquindio.poo.proyectoavanzada.Entity.Usuario;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Usuario;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
