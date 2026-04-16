@@ -100,27 +100,6 @@ public class SolicitudService {
         return actualizada;
     }
 
-    /** 🔹 Asignar prioridad
-    public Solicitud asignarPrioridad(String solicitudId, String prioridadId){
-
-        Solicitud solicitud = obtenerPorId(solicitudId);
-
-        Prioridad prioridad = prioridadRepository.findById(prioridadId)
-                .orElseThrow(() -> new RuntimeException("Prioridad no existe"));
-
-        solicitud.setPrioridad(prioridad);
-
-        Solicitud actualizada = solicitudRepository.save(solicitud);
-
-        historialService.registrarDesdeSistema(
-                actualizada,
-                "PRIORIDAD",
-                "Prioridad asignada: " + prioridad.getNivelPrioridad()
-        );
-
-        return actualizada;
-    }**/
-
     // 🔹 Obtener solicitud
     public Solicitud obtenerPorId(String id){
         return solicitudRepository.findById(id)
