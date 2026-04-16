@@ -3,6 +3,8 @@ package co.edu.uniquindio.poo.proyectoavanzada.Service;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Usuario;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.TipoAccion;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.HistorialSolicitudRepository;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.SolicitudRepository;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.UsuarioRepository;
@@ -37,7 +39,7 @@ public class HistorialSolicitudService {
         HistorialSolicitud historial = new HistorialSolicitud();
         historial.setSolicitud(solicitud);
         historial.setUsuarioResponsable(usuario);
-        historial.setAccion(accion);
+        historial.setAccion(TipoAccion.valueOf(accion.toUpperCase()));
         historial.setObservacion(observacion);
         historial.setFechaHora(LocalDateTime.now());
 
@@ -69,6 +71,23 @@ public class HistorialSolicitudService {
     ){
         HistorialSolicitud historial = new HistorialSolicitud();
         historial.setSolicitud(solicitud);
+        historial.setAccion(TipoAccion.CLASIFICACION);
+        historial.setObservacion(observacion);
+        historial.setFechaHora(LocalDateTime.now());
+
+        historialRepository.save(historial);
+    }
+    public void registrarCambioEstado(
+            Solicitud solicitud,
+            EstadoSolicitud estadoAnterior,
+            EstadoSolicitud estadoNuevo,
+            TipoAccion accion,
+            String observacion
+    ){
+        HistorialSolicitud historial = new HistorialSolicitud();
+        historial.setSolicitud(solicitud);
+        historial.setEstadoAnterior(estadoAnterior);
+        historial.setEstadoNuevo(estadoNuevo);
         historial.setAccion(accion);
         historial.setObservacion(observacion);
         historial.setFechaHora(LocalDateTime.now());

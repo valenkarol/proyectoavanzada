@@ -4,6 +4,9 @@ import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Usuario;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.CanalOrigen;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.TipoAccion;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.State.SolicitudState;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.State.SolicitudStateFactory;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,8 +66,11 @@ public class SolicitudService {
             throw new RuntimeException("El responsable está inactivo");
         }
 
+        if(solicitud.getResponsable() != null){
+            throw new RuntimeException("Ya tiene responsable asignado");
+        }
+
         solicitud.setResponsable(responsable);
-        solicitud.setEstado(EstadoSolicitud.EN_ATENCION);
 
         Solicitud actualizada = solicitudRepository.save(solicitud);
 
@@ -77,28 +83,7 @@ public class SolicitudService {
         return actualizada;
     }
 
-    // 🔹 Cambiar estado
-    public Solicitud cambiarEstado(String solicitudId, EstadoSolicitud nuevoEstado){
 
-        Solicitud solicitud = obtenerPorId(solicitudId);
-
-        // Validación simple de flujo
-        if(solicitud.getEstado() == EstadoSolicitud.CERRADA){
-            throw new RuntimeException("No se puede modificar una solicitud cerrada");
-        }
-
-        solicitud.setEstado(nuevoEstado);
-
-        Solicitud actualizada = solicitudRepository.save(solicitud);
-
-        historialService.registrarDesdeSistema(
-                actualizada,
-                "CAMBIO_ESTADO",
-                nuevoEstado.name()
-        );
-
-        return actualizada;
-    }
 
     // 🔹 Obtener solicitud
     public Solicitud obtenerPorId(String id){
@@ -111,22 +96,97 @@ public class SolicitudService {
         return solicitudRepository.findAll();
     }
 
-    // 🔹 Cerrar solicitud
+
+    public Solicitud clasificarSolicitud(String id){
+
+        Solicitud solicitud = obtenerPorId(id);
+
+        EstadoSolicitud estadoAnterior = solicitud.getEstado();
+
+        SolicitudState state = SolicitudStateFactory.getState(estadoAnterior);
+
+        state.clasificar(solicitud);
+
+        Solicitud actualizada = solicitudRepository.save(solicitud);
+
+        historialService.registrarCambioEstado(
+                actualizada,
+                estadoAnterior,
+                solicitud.getEstado(),
+                TipoAccion.CLASIFICACION,
+                "Solicitud clasificada"
+        );
+
+        return actualizada;
+    }
+
+    public Solicitud iniciarAtencion(String id){
+
+        Solicitud solicitud = obtenerPorId(id);
+
+        if(solicitud.getResponsable() == null){
+            throw new RuntimeException("Debe tener responsable asignado");
+        }
+
+        EstadoSolicitud estadoAnterior = solicitud.getEstado();
+
+        SolicitudState state = SolicitudStateFactory.getState(estadoAnterior);
+
+        state.iniciarAtencion(solicitud);
+
+        Solicitud actualizada = solicitudRepository.save(solicitud);
+
+        historialService.registrarCambioEstado(
+                actualizada,
+                estadoAnterior,
+                solicitud.getEstado(),
+                TipoAccion.INICIO_ATENCION,
+                "Solicitud iniciada"
+        );
+
+        return actualizada;
+    }
+
+    public Solicitud finalizarSolicitud(String id){
+
+        Solicitud solicitud = obtenerPorId(id);
+
+        EstadoSolicitud estadoAnterior = solicitud.getEstado();
+
+        SolicitudState state = SolicitudStateFactory.getState(estadoAnterior);
+
+        state.finalizar(solicitud);
+
+        Solicitud actualizada = solicitudRepository.save(solicitud);
+
+        historialService.registrarCambioEstado(
+                actualizada,
+                estadoAnterior,
+                solicitud.getEstado(),
+                TipoAccion.FINALIZACION,
+                "Solicitud finalizada"
+        );
+
+        return actualizada;
+    }
+
     public Solicitud cerrarSolicitud(String id){
 
         Solicitud solicitud = obtenerPorId(id);
 
-        if(solicitud.getEstado() == EstadoSolicitud.CERRADA){
-            throw new RuntimeException("La solicitud ya está cerrada");
-        }
+        EstadoSolicitud estadoAnterior = solicitud.getEstado();
 
-        solicitud.setEstado(EstadoSolicitud.CERRADA);
+        SolicitudState state = SolicitudStateFactory.getState(estadoAnterior);
+
+        state.cerrar(solicitud);
 
         Solicitud actualizada = solicitudRepository.save(solicitud);
 
-        historialService.registrarDesdeSistema(
+        historialService.registrarCambioEstado(
                 actualizada,
-                "CIERRE",
+                estadoAnterior,
+                solicitud.getEstado(),
+                TipoAccion.CIERRE,
                 "Solicitud cerrada"
         );
 
