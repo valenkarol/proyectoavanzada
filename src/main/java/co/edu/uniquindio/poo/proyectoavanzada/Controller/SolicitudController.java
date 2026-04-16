@@ -1,10 +1,15 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Controller;
 
+import co.edu.uniquindio.poo.proyectoavanzada.DTO.CerrarSolicitudRequest;
+import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudCreateRequest;
+import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudMapper;
+import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudResponse;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.HistorialSolicitudService;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.SolicitudService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,61 +25,77 @@ public class SolicitudController {
     private final HistorialSolicitudService historialSolicitudService;
 
     @PostMapping
-    public ResponseEntity<Solicitud> registrarSolicitud(
-            @RequestParam String descripcion,
-            @RequestParam String canalOrigen,
-            @RequestParam String solicitanteId
+    public ResponseEntity<SolicitudResponse> registrarSolicitud(
+            @RequestBody @Valid SolicitudCreateRequest request
     ) {
         return ResponseEntity.status(201).body(
-                solicitudService.registrarSolicitud(descripcion, canalOrigen, solicitanteId)
+                SolicitudMapper.toResponse(
+                        solicitudService.registrarSolicitud(
+                                request.getDescripcion(),
+                                request.getCanalOrigen().name(),
+                                request.getSolicitanteId()
+                        )
+                )
         );
     }
 
     @PatchMapping("/{id}/asignar")
-    public ResponseEntity<Solicitud> asignarResponsable(
+    public ResponseEntity<SolicitudResponse> asignarResponsable(
             @PathVariable String id,
             @RequestParam String responsableId
     ){
         return ResponseEntity.ok(
-                solicitudService.asignarResponsable(id, responsableId)
+                SolicitudMapper.toResponse(
+                        solicitudService.asignarResponsable(id, responsableId)
+                )
         );
     }
 
     @PatchMapping("/{id}/clasificar")
-    public ResponseEntity<Solicitud> clasificar(@PathVariable String id){
+    public ResponseEntity<SolicitudResponse> clasificar(@PathVariable String id){
         return ResponseEntity.ok(
-                solicitudService.clasificarSolicitud(id)
+                SolicitudMapper.toResponse(
+                        solicitudService.clasificarSolicitud(id)
+                )
         );
     }
 
     @PatchMapping("/{id}/iniciar-atencion")
-    public ResponseEntity<Solicitud> iniciar(@PathVariable String id){
+    public ResponseEntity<SolicitudResponse> iniciar(@PathVariable String id){
         return ResponseEntity.ok(
-                solicitudService.iniciarAtencion(id)
+                SolicitudMapper.toResponse(
+                    solicitudService.iniciarAtencion(id)
+                )
         );
     }
 
     @PatchMapping("/{id}/finalizar")
-    public ResponseEntity<Solicitud> finalizar(@PathVariable String id){
+    public ResponseEntity<SolicitudResponse> finalizar(@PathVariable String id){
         return ResponseEntity.ok(
-                solicitudService.finalizarSolicitud(id)
+                SolicitudMapper.toResponse(
+                    solicitudService.finalizarSolicitud(id)
+                )
         );
     }
 
     @PatchMapping("/{id}/cerrar")
-    public ResponseEntity<Solicitud> cerrar(
+    public ResponseEntity<SolicitudResponse> cerrar(
             @PathVariable String id,
-            @RequestParam String observacion
+            @RequestBody @Valid CerrarSolicitudRequest request
     ){
         return ResponseEntity.ok(
-                solicitudService.cerrarSolicitud(id, observacion)
+                SolicitudMapper.toResponse(
+                        solicitudService.cerrarSolicitud(id, request.getObservacion())
+                )
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Solicitud> obtener(@PathVariable String id){
+    public ResponseEntity<SolicitudResponse> obtener(@PathVariable String id){
         return ResponseEntity.ok(
-                solicitudService.obtenerPorId(id)
+                SolicitudMapper.toResponse(
+                    solicitudService.obtenerPorId(id)
+                )
         );
     }
 
@@ -86,9 +107,12 @@ public class SolicitudController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Solicitud>> listar(){
+    public ResponseEntity<List<SolicitudResponse>> listar(){
         return ResponseEntity.ok(
                 solicitudService.listar()
+                        .stream()
+                        .map(SolicitudMapper::toResponse)
+                        .toList()
         );
     }
 }
