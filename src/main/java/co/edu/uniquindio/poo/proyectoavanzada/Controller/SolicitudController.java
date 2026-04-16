@@ -1,7 +1,9 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Controller;
 
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
+import co.edu.uniquindio.poo.proyectoavanzada.Service.HistorialSolicitudService;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.SolicitudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 public class SolicitudController {
 
     private final SolicitudService solicitudService;
+    private final HistorialSolicitudService historialSolicitudService;
 
     @PostMapping
     public ResponseEntity<Solicitud> registrarSolicitud(
@@ -72,6 +75,13 @@ public class SolicitudController {
     public ResponseEntity<Solicitud> obtener(@PathVariable String id){
         return ResponseEntity.ok(
                 solicitudService.obtenerPorId(id)
+        );
+    }
+
+    @GetMapping("/{id}/historial")
+    public ResponseEntity<List<HistorialSolicitud>> historial(@PathVariable String id){
+        return ResponseEntity.ok(
+                historialSolicitudService.obtenerHistorialPorSolicitud(id)
         );
     }
 
