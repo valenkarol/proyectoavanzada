@@ -23,7 +23,7 @@ public class SolicitudService {
     private final HistorialSolicitudService historialService;
 
     // 🔹 Crear solicitud
-    public Solicitud crearSolicitud(
+    public Solicitud registrarSolicitud(
             String descripcion,
             String canalOrigen,
             String solicitanteId
@@ -47,7 +47,7 @@ public class SolicitudService {
 
         historialService.registrarDesdeSistema(
                 guardada,
-                "CREACION",
+                TipoAccion.REGISTRO,
                 "Solicitud creada"
         );
 
@@ -76,7 +76,7 @@ public class SolicitudService {
 
         historialService.registrarDesdeSistema(
                 actualizada,
-                "ASIGNACION",
+                TipoAccion.ASIGNACION,
                 "Responsable asignado"
         );
 
@@ -170,7 +170,7 @@ public class SolicitudService {
         return actualizada;
     }
 
-    public Solicitud cerrarSolicitud(String id){
+    public Solicitud cerrarSolicitud(String id, String observacion){
 
         Solicitud solicitud = obtenerPorId(id);
 
@@ -188,6 +188,11 @@ public class SolicitudService {
                 solicitud.getEstado(),
                 TipoAccion.CIERRE,
                 "Solicitud cerrada"
+        );
+        historialService.registrarDesdeSistema(
+                solicitud,
+                TipoAccion.CIERRE,
+                observacion
         );
 
         return actualizada;

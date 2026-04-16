@@ -16,20 +16,18 @@ public class SolicitudController {
 
     private final SolicitudService solicitudService;
 
-    // 🔹 Crear solicitud
-    @PostMapping("/crear")
-    public ResponseEntity<Solicitud> crearSolicitud(
+    @PostMapping
+    public ResponseEntity<Solicitud> registrarSolicitud(
             @RequestParam String descripcion,
             @RequestParam String canalOrigen,
             @RequestParam String solicitanteId
-    ){
-        return ResponseEntity.ok(
-                solicitudService.crearSolicitud(descripcion, canalOrigen, solicitanteId)
+    ) {
+        return ResponseEntity.status(201).body(
+                solicitudService.registrarSolicitud(descripcion, canalOrigen, solicitanteId)
         );
     }
 
-    // 🔹 Asignar responsable
-    @PutMapping("/{id}/asignar-responsable")
+    @PatchMapping("/{id}/asignar")
     public ResponseEntity<Solicitud> asignarResponsable(
             @PathVariable String id,
             @RequestParam String responsableId
@@ -39,47 +37,44 @@ public class SolicitudController {
         );
     }
 
-    // 🔹 Cambiar estado
-    @PutMapping("/{id}/estado")
-    public ResponseEntity<Solicitud> cambiarEstado(
+    @PatchMapping("/{id}/clasificar")
+    public ResponseEntity<Solicitud> clasificar(@PathVariable String id){
+        return ResponseEntity.ok(
+                solicitudService.clasificarSolicitud(id)
+        );
+    }
+
+    @PatchMapping("/{id}/iniciar-atencion")
+    public ResponseEntity<Solicitud> iniciar(@PathVariable String id){
+        return ResponseEntity.ok(
+                solicitudService.iniciarAtencion(id)
+        );
+    }
+
+    @PatchMapping("/{id}/finalizar")
+    public ResponseEntity<Solicitud> finalizar(@PathVariable String id){
+        return ResponseEntity.ok(
+                solicitudService.finalizarSolicitud(id)
+        );
+    }
+
+    @PatchMapping("/{id}/cerrar")
+    public ResponseEntity<Solicitud> cerrar(
             @PathVariable String id,
-            @RequestParam EstadoSolicitud estado
+            @RequestParam String observacion
     ){
         return ResponseEntity.ok(
-                solicitudService.cambiarEstado(id, estado)
+                solicitudService.cerrarSolicitud(id, observacion)
         );
     }
 
-    // 🔹 Asignar prioridad
-    @PutMapping("/{id}/prioridad")
-    public ResponseEntity<Solicitud> asignarPrioridad(
-            @PathVariable String id,
-            @RequestParam String prioridadId
-    ){
-        return ResponseEntity.ok(
-                solicitudService.asignarPrioridad(id, prioridadId)
-        );
-    }
-
-    // 🔹 Cerrar solicitud
-    @PutMapping("/{id}/cerrar")
-    public ResponseEntity<Solicitud> cerrarSolicitud(
-            @PathVariable String id
-    ){
-        return ResponseEntity.ok(
-                solicitudService.cerrarSolicitud(id)
-        );
-    }
-
-    // 🔹 Obtener solicitud
     @GetMapping("/{id}")
-    public ResponseEntity<Solicitud> obtenerPorId(@PathVariable String id){
+    public ResponseEntity<Solicitud> obtener(@PathVariable String id){
         return ResponseEntity.ok(
                 solicitudService.obtenerPorId(id)
         );
     }
 
-    // 🔹 Listar solicitudes
     @GetMapping
     public ResponseEntity<List<Solicitud>> listar(){
         return ResponseEntity.ok(

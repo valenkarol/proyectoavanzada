@@ -26,7 +26,7 @@ public class HistorialSolicitudService {
     public HistorialSolicitud registrarAccion(
             String solicitudId,
             String usuarioId,
-            String accion,
+            TipoAccion accion,
             String observacion
     ){
 
@@ -39,7 +39,7 @@ public class HistorialSolicitudService {
         HistorialSolicitud historial = new HistorialSolicitud();
         historial.setSolicitud(solicitud);
         historial.setUsuarioResponsable(usuario);
-        historial.setAccion(TipoAccion.valueOf(accion.toUpperCase()));
+        historial.setAccion(accion);
         historial.setObservacion(observacion);
         historial.setFechaHora(LocalDateTime.now());
 
@@ -66,12 +66,12 @@ public class HistorialSolicitudService {
     // Este es el que usan otros services (SolicitudService)
     public void registrarDesdeSistema(
             Solicitud solicitud,
-            String accion,
+            TipoAccion accion,
             String observacion
     ){
         HistorialSolicitud historial = new HistorialSolicitud();
         historial.setSolicitud(solicitud);
-        historial.setAccion(TipoAccion.CLASIFICACION);
+        historial.setAccion(accion);
         historial.setObservacion(observacion);
         historial.setFechaHora(LocalDateTime.now());
 
