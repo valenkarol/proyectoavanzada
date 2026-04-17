@@ -2,11 +2,8 @@ package co.edu.uniquindio.poo.proyectoavanzada.Controller;
 
 import co.edu.uniquindio.poo.proyectoavanzada.DTO.CerrarSolicitudRequest;
 import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudCreateRequest;
-import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudMapper;
 import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudResponse;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
-import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
-import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.HistorialSolicitudService;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.SolicitudService;
 import jakarta.validation.Valid;
