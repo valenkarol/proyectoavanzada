@@ -43,7 +43,7 @@ public class HistorialSolicitud {
         this.fechaHora = LocalDateTime.now();
     }
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "usuario_id", nullable = true)
     private Usuario usuarioResponsable;
 }
