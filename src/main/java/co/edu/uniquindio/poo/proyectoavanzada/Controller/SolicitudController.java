@@ -32,7 +32,8 @@ public class SolicitudController {
                 SolicitudMapper.toResponse(
                         solicitudService.registrarSolicitud(
                                 request.getDescripcion(),
-                                request.getCanalOrigen().name(),
+                                request.getCanalOrigen(),
+                                request.getTipoSolicitud(),
                                 request.getSolicitanteId()
                         )
                 )

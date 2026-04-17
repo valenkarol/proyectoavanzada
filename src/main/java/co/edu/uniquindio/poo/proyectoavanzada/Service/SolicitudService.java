@@ -5,6 +5,7 @@ import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Usuario;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.EstadoSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.CanalOrigen;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.TipoAccion;
+import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.TipoSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.State.SolicitudState;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.State.SolicitudStateFactory;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.*;
@@ -25,7 +26,8 @@ public class SolicitudService {
     // 🔹 Crear solicitud
     public Solicitud registrarSolicitud(
             String descripcion,
-            String canalOrigen,
+            CanalOrigen canalOrigen,
+            TipoSolicitud tipoSolicitud,
             String solicitanteId
     ){
 
@@ -38,9 +40,9 @@ public class SolicitudService {
 
         Solicitud solicitud = new Solicitud();
         solicitud.setDescripcion(descripcion);
-        solicitud.setFechaRegistro(LocalDateTime.now());
         solicitud.setEstado(EstadoSolicitud.REGISTRADA);
-        solicitud.setCanalOrigen(CanalOrigen.valueOf(canalOrigen));
+        solicitud.setCanalOrigen(canalOrigen);
+        solicitud.setTipoSolicitud(tipoSolicitud);
         solicitud.setSolicitante(solicitante);
 
         Solicitud guardada = solicitudRepository.save(solicitud);
@@ -189,11 +191,11 @@ public class SolicitudService {
                 TipoAccion.CIERRE,
                 "Solicitud cerrada"
         );
-        historialService.registrarDesdeSistema(
+       /*historialService.registrarDesdeSistema(
                 solicitud,
                 TipoAccion.CIERRE,
                 observacion
-        );
+        );*/
 
         return actualizada;
     }

@@ -12,6 +12,20 @@ public class SolicitudMapper {
         dto.setEstado(solicitud.getEstado());
         dto.setFechaRegistro(solicitud.getFechaRegistro());
         dto.setTipoSolicitud(solicitud.getTipoSolicitud());
+        dto.setCanalOrigen(solicitud.getCanalOrigen());
+        dto.setPrioridad(solicitud.getPrioridad());
+
+        dto.setSolicitante(
+                solicitud.getSolicitante() != null
+                        ? solicitud.getSolicitante().getId()
+                        : null
+        );
+
+        dto.setResponsable(
+                solicitud.getResponsable() != null
+                        ? solicitud.getResponsable().getId()
+                        : null
+        );
 
         return dto;
     }
