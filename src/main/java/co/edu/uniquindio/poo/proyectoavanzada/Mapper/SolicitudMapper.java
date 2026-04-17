@@ -1,6 +1,5 @@
-package co.edu.uniquindio.poo.proyectoavanzada.Mapper;
+package co.edu.uniquindio.poo.proyectoavanzada.DTO;
 
-import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudResponse;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
 
 public class SolicitudMapper {
@@ -16,9 +15,17 @@ public class SolicitudMapper {
         dto.setCanalOrigen(solicitud.getCanalOrigen());
         dto.setPrioridad(solicitud.getPrioridad());
 
-        if(solicitud.getResponsable() != null){
-            dto.setResponsableId(solicitud.getResponsable().getId());
-        }
+        dto.setSolicitante(
+                solicitud.getSolicitante() != null
+                        ? solicitud.getSolicitante().getId()
+                        : null
+        );
+
+        dto.setResponsable(
+                solicitud.getResponsable() != null
+                        ? solicitud.getResponsable().getId()
+                        : null
+        );
 
         return dto;
     }

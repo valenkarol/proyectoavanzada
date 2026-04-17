@@ -26,6 +26,11 @@ public class Solicitud {
     @Column(nullable = false)
     private LocalDateTime fechaRegistro;
 
+    @PrePersist
+    public void prePersist() {
+        this.fechaRegistro = LocalDateTime.now();
+    }
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoSolicitud estado;

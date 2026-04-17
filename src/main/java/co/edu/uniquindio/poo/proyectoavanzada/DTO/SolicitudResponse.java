@@ -16,8 +16,8 @@ public class SolicitudResponse {
     private String descripcion;
     private EstadoSolicitud estado;
     private CanalOrigen canalOrigen;
+    private Prioridad prioridad;
+    private String solicitante;   // solo ID o nombre
+    private String responsable;   // nullable
     private LocalDateTime fechaRegistro;
-
-    private Prioridad prioridad; // enum
-    private String responsableId; // simplificado
 }
