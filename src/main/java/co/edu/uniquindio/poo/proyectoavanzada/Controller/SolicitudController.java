@@ -1,8 +1,11 @@
 package co.edu.uniquindio.poo.proyectoavanzada.Controller;
 
 import co.edu.uniquindio.poo.proyectoavanzada.DTO.CerrarSolicitudRequest;
+import co.edu.uniquindio.poo.proyectoavanzada.DTO.HistorialResponse;
 import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudCreateRequest;
 import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudResponse;
+import co.edu.uniquindio.poo.proyectoavanzada.Mapper.HistorialMapper;
+import co.edu.uniquindio.poo.proyectoavanzada.Mapper.SolicitudMapper;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.HistorialSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.HistorialSolicitudService;
 import co.edu.uniquindio.poo.proyectoavanzada.Service.SolicitudService;
@@ -61,7 +64,7 @@ public class SolicitudController {
     public ResponseEntity<SolicitudResponse> iniciar(@PathVariable String id){
         return ResponseEntity.ok(
                 SolicitudMapper.toResponse(
-                    solicitudService.iniciarAtencion(id)
+                        solicitudService.iniciarAtencion(id)
                 )
         );
     }
@@ -70,7 +73,7 @@ public class SolicitudController {
     public ResponseEntity<SolicitudResponse> finalizar(@PathVariable String id){
         return ResponseEntity.ok(
                 SolicitudMapper.toResponse(
-                    solicitudService.finalizarSolicitud(id)
+                        solicitudService.finalizarSolicitud(id)
                 )
         );
     }
@@ -91,16 +94,21 @@ public class SolicitudController {
     public ResponseEntity<SolicitudResponse> obtener(@PathVariable String id){
         return ResponseEntity.ok(
                 SolicitudMapper.toResponse(
-                    solicitudService.obtenerPorId(id)
+                        solicitudService.obtenerPorId(id)
                 )
         );
     }
 
     @GetMapping("/{id}/historial")
-    public ResponseEntity<List<HistorialSolicitud>> historial(@PathVariable String id){
-        return ResponseEntity.ok(
-                historialSolicitudService.obtenerHistorialPorSolicitud(id)
-        );
+    public ResponseEntity<List<HistorialResponse>> historial(@PathVariable String id){
+
+        List<HistorialResponse> lista = historialSolicitudService
+                .obtenerHistorialPorSolicitud(id)
+                .stream()
+                .map(HistorialMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(lista);
     }
 
     @GetMapping
