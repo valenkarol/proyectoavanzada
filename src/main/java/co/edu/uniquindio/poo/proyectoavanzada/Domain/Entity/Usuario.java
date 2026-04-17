@@ -31,5 +31,10 @@ public class Usuario {
 
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
+
+    @PrePersist
+    public void prePersist() {
+        this.fechaCreacion = LocalDateTime.now();
+    }
 }
 //Corregir anotacionrd en base a BD y todo lo demas de esta clase por lo menos

@@ -69,9 +69,24 @@ public class UsuarioService {
     public Usuario actualizarUsuario(String id, Usuario datos){
         Usuario usuario = obtenerPorId(id);
 
-        usuario.setNombre(datos.getNombre());
-        usuario.setCorreo(datos.getCorreo());
-        usuario.setRol(datos.getRol());
+        if (!usuario.getCorreo().equals(datos.getCorreo())) {
+            usuarioRepository.findByCorreo(datos.getCorreo())
+                    .ifPresent(u -> {
+                        throw new RuntimeException("Correo ya en uso");
+                    });
+        }
+
+        if(datos.getNombre() != null){
+            usuario.setNombre(datos.getNombre());
+        }
+
+        if(datos.getCorreo() != null){
+            usuario.setCorreo(datos.getCorreo());
+        }
+
+        if(datos.getRol() != null){
+            usuario.setRol(datos.getRol());
+        }
 
         return usuarioRepository.save(usuario);
     }
