@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class HistorialResponse {
 
     private TipoAccion accion;
+    private String id;
     private String observacion;
     private EstadoSolicitud estadoAnterior;
     private EstadoSolicitud estadoNuevo;

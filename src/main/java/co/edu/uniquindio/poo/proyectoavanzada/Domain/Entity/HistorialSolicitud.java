@@ -38,6 +38,11 @@ public class HistorialSolicitud {
     @Column(nullable = false)
     private LocalDateTime fechaHora;
 
+    @PrePersist
+    public void prePersist() {
+        this.fechaHora = LocalDateTime.now();
+    }
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuarioResponsable;

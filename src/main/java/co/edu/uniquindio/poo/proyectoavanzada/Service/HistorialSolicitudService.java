@@ -90,7 +90,7 @@ public class HistorialSolicitudService {
         historial.setEstadoNuevo(estadoNuevo);
         historial.setAccion(accion);
         historial.setObservacion(observacion);
-        historial.setFechaHora(LocalDateTime.now());
+       // historial.setFechaHora(LocalDateTime.now());
 
         historialRepository.save(historial);
     }
