@@ -1,5 +1,6 @@
-package co.edu.uniquindio.poo.proyectoavanzada.DTO;
+package co.edu.uniquindio.poo.proyectoavanzada.Mapper;
 
+import co.edu.uniquindio.poo.proyectoavanzada.DTO.SolicitudResponse;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.Entity.Solicitud;
 
 public class SolicitudMapper {
