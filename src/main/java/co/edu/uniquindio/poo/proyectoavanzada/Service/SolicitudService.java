@@ -9,6 +9,7 @@ import co.edu.uniquindio.poo.proyectoavanzada.Domain.Enum.TipoSolicitud;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.State.SolicitudState;
 import co.edu.uniquindio.poo.proyectoavanzada.Domain.State.SolicitudStateFactory;
 import co.edu.uniquindio.poo.proyectoavanzada.Repository.*;
+import co.edu.uniquindio.poo.proyectoavanzada.Service.Rules.MotorReglasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class SolicitudService {
     private final SolicitudRepository solicitudRepository;
     private final UsuarioRepository usuarioRepository;
     private final HistorialSolicitudService historialService;
+    private final MotorReglasService motorReglasService;
 
     // 🔹 Crear solicitud
     public Solicitud registrarSolicitud(
@@ -44,6 +46,8 @@ public class SolicitudService {
         solicitud.setCanalOrigen(canalOrigen);
         solicitud.setTipoSolicitud(tipoSolicitud);
         solicitud.setSolicitante(solicitante);
+
+        motorReglasService.aplicarReglas(solicitud);
 
         Solicitud guardada = solicitudRepository.save(solicitud);
 
