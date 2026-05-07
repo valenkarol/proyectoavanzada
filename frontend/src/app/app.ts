@@ -1,0 +1,15 @@
+import {Component, signal} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App{
+  protected readonly title = signal(`mi-primera-app`);
+  nombre = `Desarrollador Backend`;
+  tecnologia = "Angular";
+  version = 19;
+}
